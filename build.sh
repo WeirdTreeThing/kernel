@@ -13,54 +13,60 @@ sudo apt install -y netpbm imagemagick git build-essential ncurses-dev xz-utils 
 # Exit on errors
 set -e
 
-if [[ $# -eq 0 ]]; then
-    
-    printq "What kernel version would you like? (choose a number 1-3)"
-    printq "This can be any ChromeOS kernel branch, but the recommended versions are:"
-    printf "1: chromeos-5.10:\n  (Kernel version that is up-to-date and has good audio support with SOF)\n"
-    printf "2: alt-chromeos-5.10:\n  (Kernel version that is up-to-date but is pinned to a commit that supports KBL/SKL devices which do not support SOF)\n"
-    printf "3: chromeos-5.4:\n  (Often causes more issues despite being a commonly-used kernel in ChromeOS)\n"
-    printq "Older kernels that may provide better support for specific boards:"
-    printf "4: chromeos-4.19:\n  (For testing purposes)\n"
-    printf "5: chromeos-4.14:\n  (For testing purposes)\n"
-    printf "6: chromeos-4.4:\n  (For testing purposes; too old for Mesa3D and some other Linux userspace software)\n"
-    printq "Newer kernels that are not widely used within ChromeOS devices:"
-    printf "7: chromeos-5.15:\n  (Similar version to those used in Linux distributions, not used in any ChromeOS devices currently)\n"
+# We dont need this for now
 
-    read KERNEL_VERSION
+#if [[ $# -eq 0 ]]; then
+#    
+#    printq "What kernel version would you like? (choose a number 1-3)"
+#    printq "This can be any ChromeOS kernel branch, but the recommended versions are:"
+#    printf "1: chromeos-5.10:\n  (Kernel version that is up-to-date and has good audio support with SOF)\n"
+#    printf "2: alt-chromeos-5.10:\n  (Kernel version that is up-to-date but is pinned to a commit that supports KBL/SKL devices which do not support SOF)\n"
+#    printf "3: chromeos-5.4:\n  (Often causes more issues despite being a commonly-used kernel in ChromeOS)\n"
+#    printq "Older kernels that may provide better support for specific boards:"
+#    printf "4: chromeos-4.19:\n  (For testing purposes)\n"
+#    printf "5: chromeos-4.14:\n  (For testing purposes)\n"
+#    printf "6: chromeos-4.4:\n  (For testing purposes; too old for Mesa3D and some other Linux userspace software)\n"
+#    printq "Newer kernels that are not widely used within ChromeOS devices:"
+#    printf "7: chromeos-5.15:\n  (Similar version to those used in Linux distributions, not used in any ChromeOS devices currently)\n"
+#
+#    read KERNEL_VERSION
+#
+#else
+#
+#    export KERNEL_VERSION=$1
+#
+#fi
 
-else
+#case $KERNEL_VERSION in
+#	# latest working 5.10 commit: 38577b2007cb6cbe54b2dfb4b4f38db77471426f
+#    "1"|"chromeos-5.10")     KERNEL_VERSION="release-R101-14588.B-chromeos-5.10"                          ;;
+#    "2"|"alt-chromeos-5.10") KERNEL_VERSION="release-R86-13421.B-chromeos-5.4"       ;;
+#    "3"|"chromeos-5.4")      KERNEL_VERSION="release-R101-14588.B-chromeos-5.4"      ;;
+#    "4"|"chromeos-4.19")     KERNEL_VERSION="release-R101-14588.B-chromeos-4.19"     ;;
+#    "5"|"chromeos-4.14")     KERNEL_VERSION="release-R101-14588.B-chromeos-4.14"     ;;
+#    "6"|"chromeos-4.4")      KERNEL_VERSION="release-R101-14588.B-chromeos-4.4"      ;;
+#    "7"|"chromeos-5.15")     KERNEL_VERSION="chromeos-5.15"                          ;;
+#    *) printerr "Please supply a valid kernel version"; exit ;;
+#esac
 
-    export KERNEL_VERSION=$1
+#printq "Cloning kernel $KERNEL_VERSION"
 
-fi
+#if [[ ! -d $KERNEL_VERSION ]]; then
 
-case $KERNEL_VERSION in
-	# latest working 5.10 commit: 38577b2007cb6cbe54b2dfb4b4f38db77471426f
-    "1"|"chromeos-5.10")     KERNEL_VERSION="release-R101-14588.B-chromeos-5.10"                          ;;
-    "2"|"alt-chromeos-5.10") KERNEL_VERSION="release-R86-13421.B-chromeos-5.4"       ;;
-    "3"|"chromeos-5.4")      KERNEL_VERSION="release-R101-14588.B-chromeos-5.4"      ;;
-    "4"|"chromeos-4.19")     KERNEL_VERSION="release-R101-14588.B-chromeos-4.19"     ;;
-    "5"|"chromeos-4.14")     KERNEL_VERSION="release-R101-14588.B-chromeos-4.14"     ;;
-    "6"|"chromeos-4.4")      KERNEL_VERSION="release-R101-14588.B-chromeos-4.4"      ;;
-    "7"|"chromeos-5.15")     KERNEL_VERSION="chromeos-5.15"                          ;;
-    *) printerr "Please supply a valid kernel version"; exit ;;
-esac
+#    if [[ $KERNEL_VERSION == "alt-chromeos-5.10" ]]; then
+#        git clone --branch chromeos-5.10 --single-branch https://chromium.googlesource.com/chromiumos/third_party/kernel.git $KERNEL_VERSION
+#        cd $KERNEL_VERSION
+#        git checkout $(git rev-list -n 1 --first-parent --before="2021-08-1 23:59" chromeos-5.10)
+#        cd ..
+#    else
+#        git clone --branch $KERNEL_VERSION --single-branch --depth 1 https://chromium.googlesource.com/chromiumos/third_party/kernel.git $KERNEL_VERSION
+#    fi
 
-printq "Cloning kernel $KERNEL_VERSION"
+#fi
 
-if [[ ! -d $KERNEL_VERSION ]]; then
-
-    if [[ $KERNEL_VERSION == "alt-chromeos-5.10" ]]; then
-        git clone --branch chromeos-5.10 --single-branch https://chromium.googlesource.com/chromiumos/third_party/kernel.git $KERNEL_VERSION
-        cd $KERNEL_VERSION
-        git checkout $(git rev-list -n 1 --first-parent --before="2021-08-1 23:59" chromeos-5.10)
-        cd ..
-    else
-        git clone --branch $KERNEL_VERSION --single-branch --depth 1 https://chromium.googlesource.com/chromiumos/third_party/kernel.git $KERNEL_VERSION
-    fi
-
-fi
+# Clone mainline
+KERNEL_VERSION=v6.0-rc3
+git clone --branch $KERNEL_VERSION --single-branch https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git $KERNEL_VERSION
 
 (
     # Bootlogo not working for now
