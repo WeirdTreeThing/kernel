@@ -89,13 +89,6 @@ git apply ../patches/bloog-audio.patch || {
     git apply ../patches/bloog-audio.patch -R --check && printq "Bloog Audio Patch already applied"
 }
 
-# Super important patch, adds support for Jasperlake i915 (many DEDEDE devices)
-# This is why we have a check to make sure again
-git apply ../patches/jsl-i915.patch || {
-    git apply ../patches/jsl-i915.patch -R --check && printq "Jasperlake iGPU Patch already applied"
-}
-grep -C3 "BIT(RCS0) | BIT(BCS0) | BIT(VCS0) | BIT(VECS0)" drivers/gpu/drm/i915/i915_pci.c | grep "jsl_info" -A5 | grep ".require_force_probe = 1" && { printerr "JSL Patch failed, exiting!"; exit; }
-
 # Important Jack Detection patch that fixes headphone jacks
 git apply ../patches/jack-detection.patch || {
     git apply ../patches/jack-detection.patch -R --check && printq "Jack Detection Patch already applied"
