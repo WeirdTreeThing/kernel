@@ -66,7 +66,7 @@ set -e
 
 # Clone mainline
 KERNEL_VERSION=v6.0-rc3
-if [[ ! -d $KERNEL_VERSION ]] then
+if [[ ! -d $KERNEL_VERSION ]]; then
 	git clone --branch $KERNEL_VERSION --single-branch https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git $KERNEL_VERSION
 fi
 
