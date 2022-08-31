@@ -105,22 +105,6 @@ printq "$(ls ../patches) applied"
 echo "mod" >> .gitignore
 touch .scmversion
 
-printq "Copying and updating kernel config"
-
-if [[ $KERNEL_VERSION == "alt-chromeos-5.10" ]]; then
-    MODULES="modules.alt.tar.xz"
-    VMLINUZ="bzImage.alt"
-    SYSTEM_MAP="System.map-breath-alt"
-    CONFIG="config-breath-alt"
-    [[ -f .config ]] || cp ../../kernel.alt.conf .config || exit
-else
-    MODULES="modules.tar.xz"
-    VMLINUZ="bzImage"
-    SYSTEM_MAP="System.map-breath"
-    CONFIG="config-breath"
-    [[ -f .config ]] || cp ../../kernel.conf .config || exit
-fi
-
 make olddefconfig
 
 # If the terminal is interactive and not running in docker
