@@ -105,6 +105,11 @@ printq "$(ls ../patches) applied"
 echo "mod" >> .gitignore
 touch .scmversion
 
+MODULES="modules.tar.xz"
+VMLINUZ="bzImage"
+SYSTEM_MAP="System.map-breath"
+[[ -f .config ]] || cp ../.config .config || exit
+
 make olddefconfig
 
 # If the terminal is interactive and not running in docker
