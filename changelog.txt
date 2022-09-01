@@ -1,1 +1,1 @@
-Disabled module compression.
+Enabled autofs4 and intel wifi dvm firmware.
