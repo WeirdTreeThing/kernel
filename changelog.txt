@@ -1,0 +1,1 @@
+Gpu works and ryzen audio might work.
