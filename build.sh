@@ -56,7 +56,7 @@ if [[ -t 0 ]] && [[ ! -f /.dockerenv ]]; then
         fi
     fi
 
-    printq "Building kernel"
+    echo "Building kernel"
     read -p "Would you like a full rebuild? (y/n) " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -72,7 +72,7 @@ else
 fi
 
 cp arch/x86/boot/bzImage ../$VMLINUZ
-printq "bzImage and modules built"
+echo "bzImage and modules built"
 
 # Sign the kernel
 futility --debug vbutil_kernel \
@@ -83,7 +83,7 @@ futility --debug vbutil_kernel \
     --config ../kernel.flags \
     --vmlinuz ../$VMLINUZ \
     --pack ../${VMLINUZ}.signed
-printq "Signed bzImage created\!" # Shell expansion weirdness
+echo "Signed bzImage created\!" # Shell expansion weirdness
 
 rm -rf mod || true
 mkdir mod
@@ -97,7 +97,7 @@ cd mod
 echo "xz -9 -T0" > fastxz
 chmod +x fastxz
 tar -cvI './fastxz' -f ../../$MODULES lib/
-printq "modules.tar.xz created!"
+echo "modules.tar.xz created!"
 
 # Copy the vmlinuz, system.map, and kernel config to the kernel directory
 cd ..
@@ -105,5 +105,5 @@ cp System.map ../$SYSTEM_MAP
 cp .config ../$CONFIG
 
 cd ..
-printq "Command to extract modules to USB:"
-printq "sudo rm -rf /mnt/lib/modules/* && sudo cp -Rv kernel/mod/lib/modules/* /mnt/lib/modules && sync"
+echo "Command to extract modules to USB:"
+echo "sudo rm -rf /mnt/lib/modules/* && sudo cp -Rv kernel/mod/lib/modules/* /mnt/lib/modules && sync"
