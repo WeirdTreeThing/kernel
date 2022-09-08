@@ -66,4 +66,5 @@ jobs:
           files: |
             bzImage
             bzImage.signed
-            modules*
+            modules.tar.xz
+            headers.tar.xz

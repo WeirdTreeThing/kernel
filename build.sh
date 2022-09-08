@@ -31,6 +31,7 @@ echo "mod" >> .gitignore
 touch .scmversion
 
 MODULES="modules.tar.xz"
+HEADERS="headers.tar.xz"
 VMLINUZ="bzImage"
 SYSTEM_MAP="System.map-breath"
 [[ -f .config ]] || cp ../.config .config || exit
@@ -88,6 +89,7 @@ echo "Signed bzImage created\!" # Shell expansion weirdness
 rm -rf mod || true
 mkdir mod
 make -j$(nproc) modules_install INSTALL_MOD_PATH=mod
+make -j$(nproc) headers_install INSTALL_HDR_PATH=hdr
 
 # Creates an archive containing /lib/modules/...
 cd mod
@@ -99,11 +101,18 @@ chmod +x fastxz
 tar -cvI './fastxz' -f ../../$MODULES lib/
 echo "modules.tar.xz created!"
 
+# Compress headers
+cd ..
+cd hdr
+
+echo "xz -9 -T0" > fastxz
+chmod +x fastxz
+tar -cvI './fastxz' -f ../../$HEADERS include/
+echo "headers.tar.xz created!"
+
 # Copy the vmlinuz, system.map, and kernel config to the kernel directory
 cd ..
 cp System.map ../$SYSTEM_MAP
 cp .config ../$CONFIG
 
 cd ..
-echo "Command to extract modules to USB:"
-echo "sudo rm -rf /mnt/lib/modules/* && sudo cp -Rv kernel/mod/lib/modules/* /mnt/lib/modules && sync"
